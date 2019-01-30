@@ -1,0 +1,106 @@
+<html>
+<head>
+</head>
+<body>
+
+</body>
+<script>
+    var input = "a+b*c+(d*e+f)*g"
+
+    function Stack() {
+        this.data = []
+    }
+
+    Stack.prototype.pop = function () {
+        return this.data.pop()
+    }
+
+    Stack.prototype.push = function (item) {
+        return this.data.push(item)
+    }
+
+    Stack.prototype.getTopItem = function () {
+        if (this.data.length == 0) {
+            return "";
+        }
+        return this.data[this.data.length - 1]
+    }
+
+    var result = "";
+    var opStack = new Stack()
+
+    for (var i = 0; i < input.length; i++) {
+        var curOpcode = input[i]
+        if (curOpcode == " ") {
+            continue
+        }
+
+        if (isOperator(curOpcode)) {
+            var topOpcode = opStack.getTopItem()
+            switch (curOpcode) {
+                case ")":
+                    while (topOpcode != "(") {
+                        opStack.pop()
+                        result += topOpcode
+                        topOpcode = opStack.getTopItem()
+                    }
+                    if(topOpcode == "("){
+                        opStack.pop()
+                    }
+                    //opStack.push(code)
+                    break
+                default:
+                    while (topOpcode != "" && operatorCmp(topOpcode, curOpcode) >= 0) {
+                        if (topOpcode == "(") {
+                            break
+                        }
+                        opStack.pop()
+                        result += topOpcode
+                        topOpcode = opStack.getTopItem()
+                    }
+                    opStack.push(curOpcode)
+            }
+        } else {
+            result += curOpcode
+        }
+    }
+
+    while (opStack.getTopItem()) {
+        topOpcode = opStack.pop()
+        result += topOpcode
+    }
+    console.log(result)
+
+    function isOperator(opcode) {
+        switch (opcode) {
+            case "+":
+            case "-":
+            case "*":
+            case "/":
+            case "(":
+            case ")":
+                return true
+        }
+        return false
+    }
+
+
+    function operatorCmp(first, second) {
+        var operatorLvl = {
+            '+': 1,
+            '-': 1,
+            '*': 2,
+            '/': 2,
+            '(': 3,
+            ')': 3
+        }
+        if (operatorLvl[first] == undefined || operatorLvl[second] == undefined) {
+            throw  "un support operator first :" + first + " second: " + second;
+            return
+        }
+        return operatorLvl[first] - operatorLvl[second]
+    }
+
+
+</script>
+</html>
